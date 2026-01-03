@@ -4,9 +4,12 @@ import matplotlib.pyplot as plt
 
 
 
+data = pd.read_csv('datasheets/albums.csv', on_bad_lines='warn')
+df = pd.DataFrame(data)
+
+
 def album_analysis():
-	data = pd.read_csv('datasheets/AlbumLog_corrected.csv', on_bad_lines='warn')
-	df = pd.DataFrame(data)
+	
 	#print('----------\nData Table: ')
 	#print(df)
 
