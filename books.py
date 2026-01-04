@@ -5,131 +5,132 @@ import numpy as np
 
 
 data = pd.read_csv('datasheets/spending_books.csv', on_bad_lines='warn')
-df = pd.DataFrame(data)
+df_data = pd.DataFrame(data)
 
 
-def book_analysis():
-
-	print("1) View full table.")
-	print("2) View book spending.")
-	print("3) View book acquisition.")
-	try:
-		opt = input("Select an option: ")
-		opti = int(opt)
-		if opti in range(1,4):
-			#Change the datatype of the Date column
-			df['Date'] = pd.to_datetime(df['Date'])
-			#Add the the Year column for sorting
-			df['Year'] = df['Date'].dt.year
 
 
-			if opti==1:
-				max_rows, max_cols = df.shape
-				pd.set_option('display.max_rows', max_rows)
-				print(df)
+def book_analysis(view, update, graph):
 
+	# ==============
+	# View the datatable
+	# ==============
+	if view:
 
-			## Books spending over time: group by Date, for all values of Paid, show cost.
-			elif opti==2:
-				title = 'Book Spending by Paid category over Time'
-				df_spend = df.pivot_table(
-					index='Year',
-					columns='Paid',
-					values='Cost',
-					aggfunc='sum'
-				)
+		print("1) View full table.")
+		print("2) View book spending.")
+		print("3) View book acquisition.")
+		try:
+			opt = input("Select an option: ")
+			opti = int(opt)
+			if opti in range(1,4):
 				
-				#Create 'others' column
-				df_spend['Others'] = df_spend[['Dad','Gift','Grandma','Mom']].sum(axis=1)
-				#Delete not used columns
-				df_spend = df_spend.drop(['Dad','Gift','Grandma','Mom'], axis=1)
-				#Create 'Total' column
-				df_spend['Total'] = df_spend.sum(axis=1)
-				
-				#Plot the columns as bars
-				fig, ax = plt.subplots()
-				df_spend.plot(
-					y=['Myself','Wallet','Others'],
-					kind='bar',
-					ax=ax,
-					color=['blue','red','green'],
-					label=['Myself','Wallet','Others']
-				)
-				#Plot the Total line using the SAME x positions
-				ax.plot(
-					range(len(df_spend)),
-					df_spend['Total'],
-					color='black',
-					linewidth=2.5,
-					zorder=10,
-					marker='o',
-					label='Total',
-				)
-				#Other properties of the graph
-				ax.set_title(title)
-				ax.set_xlabel('Year')
-				ax.set_ylabel('Spending (€)')
-				ax.legend(loc='upper left')
-				
-				print('\n',title,':\n----------')
-				print(df_spend)
-				plt.tight_layout()
-				plt.show()
+				## View the full datatable
+				if opti==1:
+					display_full_table()
 
-
-			## Nº of books over time: group by Date, for all values of Paid, count.
-			elif opti==3:
-				title = 'Book Acquisitions by Paid category over Time'
-				df_acq = df.pivot_table(
-					index='Year',
-					columns='Paid',
-					values='Cost',
-					aggfunc='count'
-				)
+				## View the pivot tables and their graphs.
+				elif opti==2 or opti==3:
+					display_table(opti, graph)
 				
-				#Create 'others' column
-				df_acq['Others'] = df_acq[['Dad','Gift','Grandma','Mom']].sum(axis=1)
-				#Delete not used columns
-				df_acq = df_acq.drop(['Dad','Gift','Grandma','Mom'], axis=1)
-				#Create 'Total' column
-				df_acq['Total'] = df_acq.sum(axis=1)
-				
-				#Plot the columns as bars
-				fig, ax = plt.subplots()
-				df_acq.plot(
-					y=['Myself','Wallet','Others'],
-					kind='bar',
-					ax=ax,
-					color=['blue','red','green'],
-					label=['Myself','Wallet','Others']
-				)
-				#Plot the Total line using the SAME x positions
-				ax.plot(
-					range(len(df_acq)),
-					df_acq['Total'],
-					color='black',
-					linewidth=2.5,
-					zorder=10,
-					marker='o',
-					label='Total',
-				)
-				#Other properties of the graph
-				ax.set_title(title)
-				ax.set_xlabel('Year')
-				ax.set_ylabel('Nº of Books')
-				ax.legend(loc='upper left')
-				
-				print('\n',title,':\n----------')
-				print(df_acq)
-				plt.tight_layout()
-				plt.show()
-
-
-		else:
+			else:
+				print("Option not valid.")
+		except ValueError:
 			print("Option not valid.")
+	
+	
+	# ==============
+	# Update the datatable
+	# ==============
+	else:
+		print("CRUD")
 
-	except ValueError:
-		print("Option must be a number")
+
+
+
+
+def display_full_table():
+	max_rows, max_cols = df_data.shape
+	pd.set_option('display.max_rows', max_rows)
+	print(df_data)
+
+
+
+title1 = "Book Spending by Paid category over Time"
+title2 = "Books Acquired by Paid category over Time"
+ylabel1 = 'Spending (€)'
+ylabel2 = 'Nº of Books'
+def df1():
+	df_spend = df_data.pivot_table(
+		index='Year',
+		columns='Paid',
+		values='Cost',
+		aggfunc='sum'
+	)
+	return df_spend
+def df2():
+	df_acq = df_data.pivot_table(
+		index='Year',
+		columns='Paid',
+		values='Cost',
+		aggfunc='count'
+	)
+	return df_acq
+
+def display_table(opti, graph):
+	#Append the 'Year' column for grouping by converting the 'Date' column to datetime, and extracting the year
+	df_data['Date'] = pd.to_datetime(df_data['Date'])
+	df_data['Year'] = df_data['Date'].dt.year
 	
+	#Assign new variables based on the option
+	df = df1()
+	title = title1
+	ylabel = ylabel1
+	if opti==3:
+		df = df2()
+		title = title2
+		ylabel = ylabel2
 	
+	#Collapse the data from multiple columns to 'Others' column, and then delete them
+	df['Others'] = df[['Dad','Gift','Grandma','Mom']].sum(axis=1)
+	df = df.drop(['Dad','Gift','Grandma','Mom'], axis=1)
+	#Create 'Total' column
+	df['Total'] = df.sum(axis=1)
+	#Show the table
+	print('\n',title,':\n----------')
+	print(df)
+	
+	if graph:	##If the option to show the graph is selected
+		#Plot the columns as bars
+		fig, ax = plt.subplots()
+		df.plot(
+			y=['Myself','Wallet','Others'],
+			kind='bar',
+			ax=ax,
+			color=['blue','red','green'],
+			label=['Myself','Wallet','Others']
+		)
+		#Plot the Total line using the SAME x positions
+		ax.plot(
+			range(len(df)),
+			df['Total'],
+			color='black',
+			linewidth=2.5,
+			zorder=10,
+			marker='o',
+			label='Total',
+		)
+		#Other properties of the graph
+		ax.set_title(title)
+		ax.set_xlabel('Year')
+		ax.set_ylabel(ylabel)
+		ax.legend(loc='upper left')
+		
+		#Show the plot
+		plt.tight_layout()
+		plt.show()
+
+
+
+
 
