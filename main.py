@@ -1,6 +1,6 @@
 import argparse
-from albums import album_analysis
-from books import book_analysis
+from albums import album_view, album_db
+from books import book_view, book_db
 
 
 #Action to list all the available datatables
@@ -28,10 +28,13 @@ if __name__ == "__main__":
 	)
 	parser.add_argument("dt_name", choices=datatables, help="name of the datatable to analyse")
 	exc_gr = parser.add_mutually_exclusive_group()
-	exc_gr.add_argument("-v","--view",	 help="view the datatable or perform data analysis", action="store_true", default=True)
-	exc_gr.add_argument("-u","--update", help="add or modify data of the datatable",         action="store_true")
-	parser.add_argument('--graph',       help="show the graph corresponding to the table",   action=argparse.BooleanOptionalAction, default=True)
 	parser.add_argument('-l', '--list',  help="list all available datatables",               action=_ListAction)
+	exc_gr.add_argument("-r","--read",	 help="view the datatable or perform data analysis", action="store_true", default=True)
+	exc_gr.add_argument("-c","--create", help="add data to the datatable",					 action="store_true")
+	exc_gr.add_argument("-u","--update", help="modify data in the datatable",				 action="store_true")
+	exc_gr.add_argument("-d","--delete", help="delete data in the datatable",				 action="store_true")
+	parser.add_argument('--graph',       help="show the graph corresponding to the table",   action=argparse.BooleanOptionalAction, default=True)
+	parser.add_argument('--save',        help="save the graph corresponding to the table",   action="store_true", default=False)
 	args = parser.parse_args()
 	
 	if args.update:
@@ -39,9 +42,12 @@ if __name__ == "__main__":
 	
 	try:
 		if args.dt_name=="Albums":
-			album_analysis(args.view, args.update, args.graph)
+			if args.view:
+				book_view(args.graph, args.save)
+			else:
+				book_db(args.graph, args.save)
 		elif args.dt_name=="Books":
-			book_analysis(args.view, args.update, args.graph)
+			book_analysis(args.view, args.update, args.graph, args.save)
 		
 	except KeyboardInterrupt:
 		print("\n\nExited program.")

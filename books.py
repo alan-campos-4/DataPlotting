@@ -8,47 +8,56 @@ data = pd.read_csv('datasheets/spending_books.csv', on_bad_lines='warn')
 df_data = pd.DataFrame(data)
 
 
+# ==============
+# Display the datatable
+# ==============
 
-
-def book_analysis(view, update, graph):
-
-	# ==============
-	# View the datatable
-	# ==============
-	if view:
-
-		print("1) View full table.")
-		print("2) View book spending.")
-		print("3) View book acquisition.")
-		try:
-			opt = input("Select an option: ")
-			opti = int(opt)
-			if opti in range(1,4):
-				
-				## View the full datatable
-				if opti==1:
-					display_full_table()
-
-				## View the pivot tables and their graphs.
-				elif opti==2 or opti==3:
-					display_table(opti, graph)
-				
-			else:
-				print("Option not valid.")
-		except ValueError:
+def book_view(graph, save):
+	print("1) View full table.")
+	print("2) Display spending over time.")
+	print("3) Display acquisition over time.")
+	"""
+	print("3) Display quantity by year.")
+	print("3) Display reading by year.")
+	print("3) Display reading status.")
+	print("3) Display by genre.")
+	print("3) Display by location.")
+	print("3) Display by country.")
+	print("3) Display by format.")
+	"""
+	try:
+		opt = input("Select an option: ")
+		opti = int(opt)
+		if opti in range(1,4):
+			
+			## View the full datatable
+			if opti==1:
+				display_full_table()
+			## View the pivot tables and their graphs.
+			elif opti==2 or opti==3:
+				display_table(opti, graph)
+			
+		else:
 			print("Option not valid.")
-	
-	
-	# ==============
-	# Update the datatable
-	# ==============
-	else:
-		print("CRUD")
+	except ValueError:
+		print("Option not valid.")
+
+
+# ==============
+# Update the datatable
+# ==============
+
+def book_dbe():
+	print("CRUD")
 
 
 
 
 
+
+## ----------
+## 1) View the full datatable.
+## ----------
 def display_full_table():
 	max_rows, max_cols = df_data.shape
 	pd.set_option('display.max_rows', max_rows)
@@ -56,27 +65,11 @@ def display_full_table():
 
 
 
-title1 = "Book Spending by Paid category over Time"
-title2 = "Books Acquired by Paid category over Time"
-ylabel1 = 'Spending (€)'
-ylabel2 = 'Nº of Books'
-def df1():
-	df_spend = df_data.pivot_table(
-		index='Year',
-		columns='Paid',
-		values='Cost',
-		aggfunc='sum'
-	)
-	return df_spend
-def df2():
-	df_acq = df_data.pivot_table(
-		index='Year',
-		columns='Paid',
-		values='Cost',
-		aggfunc='count'
-	)
-	return df_acq
 
+## ----------
+## 2) View book spending
+## 3) View book acquisitions
+## ----------
 def display_table(opti, graph):
 	#Append the 'Year' column for grouping by converting the 'Date' column to datetime, and extracting the year
 	df_data['Date'] = pd.to_datetime(df_data['Date'])
@@ -129,6 +122,17 @@ def display_table(opti, graph):
 		#Show the plot
 		plt.tight_layout()
 		plt.show()
+## ----------
+## Parameters.
+## ----------
+def df1():
+	return df_data.pivot_table(index='Year', columns='Paid', values='Cost', aggfunc='sum')
+def df2():
+	return df_data.pivot_table(index='Year', columns='Paid', values='Cost', aggfunc='count')
+title1 = "Book Spending by Paid category over Time"
+title2 = "Books Acquired by Paid category over Time"
+ylabel1 = 'Spending (€)'
+ylabel2 = 'Nº of Books'
 
 
 

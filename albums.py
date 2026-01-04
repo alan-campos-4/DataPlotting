@@ -8,49 +8,48 @@ data = pd.read_csv('datasheets/albums.csv', on_bad_lines='warn')
 df_data = pd.DataFrame(data)
 
 
+# ==============
+# Display the datatable
+# ==============
 
-
-def album_analysis(view, update, graph):
-
-	# ==============
-	# View options
-	# ==============
-	if view:
-
-		print("1) View full table.")
-		print("2) View albums by group.") ###
-		print("3) View albums by genre.") ###
-		print("4) View albums by group and year listened to.") ###
-		print("5) View albums by month listened to.") ###
-		print("6) View albums by group and five-year period released.") ###
-		try:
-			opt = input("Select an option: ")
-			opti = int(opt)
-			if opti in range(1,7):
-				if opti==1:
-					display_full_table()
-				if opti==2:
-					display_by_group(graph)
-				if opti==3:
-					display_by_genre(graph)
-				if opti==4:
-					display_by_listen_year(graph)
-				if opti==5:
-					display_by_listen_month(graph)
-				else:
-					display_by_year_period(graph)
-				
+def album_view(graph, save):
+	print("1) View full table.")
+	print("2) View albums by group.")
+	print("3) View albums by genre.") ###
+	print("4) View albums by group and year listened to.") ###
+	print("5) View albums by month listened to.") ###
+	print("6) View albums by group and five-year period released.") ###
+	try:
+		opt = input("Select an option: ")
+		opti = int(opt)
+		if opti in range(1,7):
+			if opti==1:
+				display_full_table()
+			elif opti==2:
+				display_by_group(graph, save)
+			elif opti==3:
+				display_by_genre(graph, save)
+			elif opti==4:
+				display_by_listen_year(graph, save)
+			elif opti==5:
+				display_by_listen_month(graph, save)
 			else:
-				print("Option not valid.")
-		except ValueError:
+				display_by_year_period(graph, save)
+			
+		else:
 			print("Option not valid.")
-	
-	
-	# ==============
-	# Update the datatable
-	# ==============
-	else:
-		print("CRUD")
+	except ValueError:
+		print("Option not valid.")
+
+
+# ==============
+# Update the datatable
+# ==============
+
+def album_db():
+	print("CRUD")
+
+
 
 
 
@@ -69,17 +68,20 @@ def display_full_table():
 ## ----------
 ## 2) View albums by group.
 ## ----------
-def display_by_group(graph):
+def display_by_group(graph, save):
 	print('----------\nAlbums by group: ')
-	df1 = df.pivot_table(index=['Group'], aggfunc={'Group': 'count'})
+	df1 = df_data.pivot_table(index=['Group'], aggfunc={'Group': 'count'})
 	df1 = df1.rename(columns={'Group': 'Group Count'})
 	df1 = df1.reset_index()
 	df1 = df1.sort_values(by=['Group Count'], ascending=False)
 	print(df1)
-
-	## Pie chart
-	df1.plot.pie(y='Group Count')
-	plt.show()
+	
+	if graph:
+		df1.plot.pie(y='Group Count')
+		if save:
+			plt.savefig('./res/album_group_count.pdf')
+			print("Graph saved.")
+		plt.show()
 
 
 
@@ -87,7 +89,7 @@ def display_by_group(graph):
 ## ----------
 ## 3) View albums by genre.
 ## ----------
-def display_by_genre(graph):
+def display_by_genre(graph, save):
 	print("...")
 
 
@@ -96,7 +98,7 @@ def display_by_genre(graph):
 ## ----------
 ## 4) View albums by group and year listened to.
 ## ----------
-def display_by_listen_year(graph):
+def display_by_listen_year(graph, save):
 	print("...")
 
 
@@ -105,7 +107,7 @@ def display_by_listen_year(graph):
 ## ----------
 ## 5) View albums by month listened to.
 ## ----------
-def display_by_listen_month(graph):
+def display_by_listen_month(graph, save):
 	print("...")
 
 
@@ -114,7 +116,7 @@ def display_by_listen_month(graph):
 ## ----------
 ## 6) View albums by group and five-year period released.
 ## ----------
-def display_by_year_period(graph):
+def display_by_year_period(graph, save):
 	print("...")
 
 
