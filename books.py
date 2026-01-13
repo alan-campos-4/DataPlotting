@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 
 
-data = pd.read_csv('datasheets/spending_books.csv', on_bad_lines='warn')
+data = pd.read_csv('datasheets/books.csv', on_bad_lines='warn')
 df_data = pd.DataFrame(data)
 
 
@@ -47,7 +47,7 @@ def book_view(graph, save):
 # Update the datatable
 # ==============
 
-def book_dbe():
+def book_db():
 	print("CRUD")
 
 
@@ -85,8 +85,8 @@ def display_table(opti, graph):
 		ylabel = ylabel2
 	
 	#Collapse the data from multiple columns to 'Others' column, and then delete them
-	df['Others'] = df[['Dad','Gift','Grandma','Mom']].sum(axis=1)
-	df = df.drop(['Dad','Gift','Grandma','Mom'], axis=1)
+	df['Others'] = df[['Dad','Gift','Mom']].sum(axis=1) #Grandma not in index
+	df = df.drop(['Dad','Gift','Mom'], axis=1)
 	#Create 'Total' column
 	df['Total'] = df.sum(axis=1)
 	#Show the table
@@ -126,9 +126,9 @@ def display_table(opti, graph):
 ## Parameters.
 ## ----------
 def df1():
-	return df_data.pivot_table(index='Year', columns='Paid', values='Cost', aggfunc='sum')
+	return df_data.pivot_table(index='Year', columns='Paid', values='Price', aggfunc='sum')
 def df2():
-	return df_data.pivot_table(index='Year', columns='Paid', values='Cost', aggfunc='count')
+	return df_data.pivot_table(index='Year', columns='Paid', values='Price', aggfunc='count')
 title1 = "Book Spending by Paid category over Time"
 title2 = "Books Acquired by Paid category over Time"
 ylabel1 = 'Spending (€)'

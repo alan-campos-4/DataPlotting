@@ -37,17 +37,18 @@ if __name__ == "__main__":
 	parser.add_argument('--save',        help="save the graph corresponding to the table",   action="store_true", default=False)
 	args = parser.parse_args()
 	
-	if args.update:
-		args.view = False
 	
 	try:
 		if args.dt_name=="Albums":
-			if args.view:
+			if args.read:
 				book_view(args.graph, args.save)
 			else:
 				book_db(args.graph, args.save)
 		elif args.dt_name=="Books":
-			book_analysis(args.view, args.update, args.graph, args.save)
+			if args.read:
+				album_view(args.graph, args.save)
+			else:
+				album_db(args.graph, args.save)
 		
 	except KeyboardInterrupt:
 		print("\n\nExited program.")
