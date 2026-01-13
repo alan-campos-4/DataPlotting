@@ -13,7 +13,7 @@ df_data = pd.DataFrame(data)
 # ==============
 
 def book_view(graph, save):
-	print("1) View full table.")
+	print("1) View full table.") ##order
 	print("2) Display spending over time.")
 	print("3) Display acquisition over time.")
 	"""
@@ -24,6 +24,7 @@ def book_view(graph, save):
 	print("3) Display by location.")
 	print("3) Display by country.")
 	print("3) Display by format.")
+	"""
 	"""
 	try:
 		opt = input("Select an option: ")
@@ -38,10 +39,11 @@ def book_view(graph, save):
 				display_table(opti, graph)
 			
 		else:
-			print("Option not valid.")
+			print("Option not in range.")
 	except ValueError:
-		print("Option not valid.")
-
+		print("Option not valid...")
+	"""
+	display_table(2, graph, save)
 
 # ==============
 # Update the datatable
@@ -70,7 +72,7 @@ def display_full_table():
 ## 2) View book spending
 ## 3) View book acquisitions
 ## ----------
-def display_table(opti, graph):
+def display_table(opti, graph, save):
 	#Append the 'Year' column for grouping by converting the 'Date' column to datetime, and extracting the year
 	df_data['Date'] = pd.to_datetime(df_data['Date'])
 	df_data['Year'] = df_data['Date'].dt.year

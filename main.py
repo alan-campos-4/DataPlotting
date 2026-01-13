@@ -39,6 +39,7 @@ if __name__ == "__main__":
 	
 	
 	try:
+		
 		if args.dt_name=="Albums":
 			if args.read:
 				book_view(args.graph, args.save)
@@ -52,6 +53,8 @@ if __name__ == "__main__":
 		
 	except KeyboardInterrupt:
 		print("\n\nExited program.")
+	except Exception as e:
+		print("An error occurred:", e)
 
 
 
